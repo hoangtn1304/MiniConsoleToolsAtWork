@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyticByPopularity", "Ana
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildRawDataFile", "BuildRawDataFile\BuildRawDataFile.csproj", "{813A6E9F-6E11-4C30-8A73-0EC09EBC3AA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckFileLastWrite", "CheckFileLastWrite\CheckFileLastWrite.csproj", "{5707D97D-1C7D-4685-BE98-42DC012CC879}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckFileStatus", "CheckFileStatus\CheckFileStatus.csproj", "{044BD3E8-C575-46FA-BFBB-A054D55142A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,10 @@ Global
 		{813A6E9F-6E11-4C30-8A73-0EC09EBC3AA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{813A6E9F-6E11-4C30-8A73-0EC09EBC3AA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{813A6E9F-6E11-4C30-8A73-0EC09EBC3AA3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5707D97D-1C7D-4685-BE98-42DC012CC879}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5707D97D-1C7D-4685-BE98-42DC012CC879}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5707D97D-1C7D-4685-BE98-42DC012CC879}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5707D97D-1C7D-4685-BE98-42DC012CC879}.Release|Any CPU.Build.0 = Release|Any CPU
+		{044BD3E8-C575-46FA-BFBB-A054D55142A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{044BD3E8-C575-46FA-BFBB-A054D55142A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{044BD3E8-C575-46FA-BFBB-A054D55142A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{044BD3E8-C575-46FA-BFBB-A054D55142A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
