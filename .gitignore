@@ -322,3 +322,9 @@ ASALocalRun/
 *.binlog
 
 BuildRawDataFile/Raw
+AnalyticByPopularity/data
+AnalyticByPopularity/fullpath
+AnalyticByPopularity/html
+AnalyticByPopularity/ngon
+AnalyticByPopularity/output
+/AnalyticByPopularity/Software & Services 2.txt
