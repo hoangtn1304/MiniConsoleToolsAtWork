@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1E075BBD-A2CD-429E-834E-2D7D309F7480}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>AnalyticByPopularity</RootNamespace>
+    <AssemblyName>AnalyticByPopularity</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FolderInfo.cs" />
+    <Compile Include="FolderPair.cs" />
+    <Compile Include="LocalDriveBlob.cs" />
+    <Compile Include="LocalFile.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="data\Media.txt" />
+    <Content Include="data\Pharmaceuticals, Biotechnology &amp; Life Sciences.txt" />
+    <Content Include="data\Real Estate.txt" />
+    <Content Include="data\Retailing.txt" />
+    <Content Include="data\Semiconductors &amp; Semiconductor Equipment.txt" />
+    <Content Include="data\Software &amp; Services.txt" />
+    <Content Include="data\Technology Hardware &amp; Equipment.txt" />
+    <Content Include="data\Telecommunication Services.txt" />
+    <Content Include="data\Transportation.txt" />
+    <Content Include="data\Utilities.txt" />
+    <Content Include="fullpath\Media.txt" />
+    <Content Include="fullpath\Pharmaceuticals, Biotechnology &amp; Life Sciences.txt" />
+    <Content Include="fullpath\Real Estate.txt" />
+    <Content Include="fullpath\Retailing.txt" />
+    <Content Include="fullpath\Semiconductors &amp; Semiconductor Equipment.txt" />
+    <Content Include="fullpath\Software &amp; Services.txt" />
+    <Content Include="fullpath\Technology Hardware &amp; Equipment.txt" />
+    <Content Include="fullpath\Telecommunication Services.txt" />
+    <Content Include="fullpath\Transportation.txt" />
+    <Content Include="fullpath\Utilities.txt" />
+    <Content Include="html\Automobiles &amp; Components.txt" />
+    <Content Include="html\Banks.txt" />
+    <Content Include="html\Capital Goods.txt" />
+    <Content Include="html\Commercial &amp; Professional Services.txt" />
+    <Content Include="html\Consumer Durables &amp; Apparel.txt" />
+    <Content Include="html\Consumer Services.txt" />
+    <Content Include="html\Diversified Financials.txt" />
+    <Content Include="html\Energy.txt" />
+    <Content Include="html\Food &amp; Staples Retailing.txt" />
+    <Content Include="html\Food, Beverage &amp; Tobacco.txt" />
+    <Content Include="html\Health Care Equipment &amp; Services.txt" />
+    <Content Include="html\Household &amp; Personal Products.txt" />
+    <Content Include="html\Insurance.txt" />
+    <Content Include="html\Materials.txt" />
+    <Content Include="html\Media.txt" />
+    <Content Include="html\Pharmaceuticals, Biotechnology &amp; Life Sciences.txt" />
+    <Content Include="html\Real Estate.txt" />
+    <Content Include="html\Retailing.txt" />
+    <Content Include="html\Semiconductors &amp; Semiconductor Equipment.txt" />
+    <Content Include="html\Software &amp; Services.txt" />
+    <Content Include="html\Technology Hardware &amp; Equipment.txt" />
+    <Content Include="html\Telecommunication Services.txt" />
+    <Content Include="html\Transportation.txt" />
+    <Content Include="html\Utilities.txt" />
+    <Content Include="template\index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="output\" />
+    <Folder Include="text\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

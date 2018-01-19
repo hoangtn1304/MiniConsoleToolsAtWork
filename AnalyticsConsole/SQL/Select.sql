@@ -1,0 +1,2 @@
+﻿select GicsIndustryGroupCode, GicsIndustryGroupName
+from tblGicsIndustryGroup

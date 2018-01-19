@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body></body>
+<style>
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+path.textpath {
+    fill: none;
+    stroke: none;
+}
+marker#licensing {
+  fill: green;
+}
+path.link.licensing {
+  stroke: green;
+}
+path.link.resolved {
+  stroke-dasharray: 0,2 1;
+}
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+text.shadow {
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: .8;
+}
+</style>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+// http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
+var links = [
+{source: " Other", target: " Other", value: "23",  type: "suit"},
+{source: " 2015", target: " Other", value: "50",  type: "suit"},
+{source: " 2014", target: " Other", value: "33",  type: "suit"},
+{source: " 2016", target: " Other", value: "29",  type: "suit"},
+{source: " 2013", target: " Other", value: "79",  type: "suit"},
+{source: " Commercial", target: " Other", value: "28",  type: "suit"},
+{source: " Financial", target: " Other", value: "14",  type: "suit"},
+{source: " Corporate", target: " Other", value: "14",  type: "suit"},
+{source: " Other", target: " Title Documents", value: "430",  type: "suit"},
+{source: " Title Documents", target: " Title Documents", value: "814",  type: "suit"},
+{source: " Searches", target: " Title Documents", value: "413",  type: "suit"},
+{source: " Planning", target: " Title Documents", value: "419",  type: "suit"},
+{source: " Reports and Certificates", target: " Title Documents", value: "416",  type: "suit"},
+{source: " Occupational Documents", target: " Title Documents", value: "407",  type: "suit"},
+{source: " Licences and Permits", target: " Title Documents", value: "298",  type: "suit"},
+{source: " Reports", target: " Title Documents", value: "416",  type: "suit"},
+{source: " Licences", target: " Title Documents", value: "308",  type: "suit"},
+{source: " .fsdl", target: " 2015", value: "264",  type: "suit"},
+{source: " 2015", target: " 2015", value: "86",  type: "suit"},
+{source: " Drilling", target: " 2015", value: "381",  type: "suit"},
+{source: " AFE", target: " 2015", value: "327",  type: "suit"},
+{source: " .fsdl", target: " 2014", value: "156",  type: "suit"},
+{source: " 2014", target: " 2014", value: "151",  type: "suit"},
+{source: " 2013", target: " 2014", value: "22",  type: "suit"},
+{source: " Correspondence", target: " 2014", value: "63",  type: "suit"},
+{source: " Drilling", target: " 2014", value: "285",  type: "suit"},
+{source: " AFE", target: " 2014", value: "149",  type: "suit"},
+{source: " .fsdl", target: " Regulatory Information", value: "299",  type: "suit"},
+{source: " .fsdl", target: " 2016", value: "62",  type: "suit"},
+{source: " 2016", target: " 2016", value: "100",  type: "suit"},
+{source: " Drilling", target: " 2016", value: "93",  type: "suit"},
+{source: " Permits", target: " 2016", value: "30",  type: "suit"},
+{source: " AFE", target: " 2016", value: "223",  type: "suit"},
+{source: " .fsdl", target: " LWD", value: "236",  type: "suit"},
+{source: " Mudlog", target: " WCR", value: "103",  type: "suit"},
+{source: " Composite log", target: " WCR", value: "85",  type: "suit"},
+{source: " 2015", target: " Planning", value: "11",  type: "suit"},
+{source: " Reports", target: " Planning", value: "22",  type: "suit"},
+{source: " Permits", target: " Planning", value: "23",  type: "suit"},
+{source: " Environmental", target: " Planning", value: "23",  type: "suit"},
+{source: " .fsdl", target: " 2013", value: "89",  type: "suit"},
+{source: " 2013", target: " 2013", value: "33",  type: "suit"},
+{source: " Other", target: " Legal", value: "478",  type: "suit"},
+{source: " Title Documents", target: " Legal", value: "4212",  type: "suit"},
+{source: " 2015", target: " Legal", value: "22",  type: "suit"},
+{source: " 2014", target: " Legal", value: "17",  type: "suit"},
+{source: " 2016", target: " Legal", value: "26",  type: "suit"},
+{source: " Searches", target: " Legal", value: "413",  type: "suit"},
+{source: " Planning", target: " Legal", value: "419",  type: "suit"},
+{source: " Reports and Certificates", target: " Legal", value: "416",  type: "suit"},
+{source: " Occupational Documents", target: " Legal", value: "407",  type: "suit"},
+{source: " 2013", target: " Legal", value: "12",  type: "suit"},
+{source: " Licences and Permits", target: " Legal", value: "298",  type: "suit"},
+{source: " 2012", target: " Legal", value: "12",  type: "suit"},
+{source: " Insurance", target: " Legal", value: "44",  type: "suit"},
+{source: " Commercial", target: " Legal", value: "158",  type: "suit"},
+{source: " Reports", target: " Legal", value: "417",  type: "suit"},
+{source: " General", target: " Legal", value: "11",  type: "suit"},
+{source: " Property", target: " Legal", value: "4207",  type: "suit"},
+{source: " Permits", target: " Legal", value: "12",  type: "suit"},
+{source: " Contracts", target: " Legal", value: "369",  type: "suit"},
+{source: " Corporate", target: " Legal", value: "94",  type: "suit"},
+{source: " 2010", target: " Legal", value: "18",  type: "suit"},
+{source: " Forms", target: " Legal", value: "12",  type: "suit"},
+{source: " Licences", target: " Legal", value: "313",  type: "suit"},
+{source: " Environmental", target: " Legal", value: "60",  type: "suit"},
+{source: " .fsdl", target: " Deviation Survey", value: "184",  type: "suit"},
+{source: " .fsdl", target: " Mudlog", value: "13",  type: "suit"},
+{source: " Other", target: " Geophysics", value: "11",  type: "suit"},
+{source: " 2015", target: " Geophysics", value: "20",  type: "suit"},
+{source: " 2014", target: " Geophysics", value: "12",  type: "suit"},
+{source: " Mudlog", target: " Geophysics", value: "16",  type: "suit"},
+{source: " Geophysics", target: " Geophysics", value: "48",  type: "suit"},
+{source: " Petrophysics", target: " Geophysics", value: "106",  type: "suit"},
+{source: " 2017", target: " Geophysics", value: "11",  type: "suit"},
+{source: " Wireline logs", target: " Geophysics", value: "107",  type: "suit"},
+{source: " Logs", target: " Geophysics", value: "21",  type: "suit"},
+{source: " LAS files", target: " Geophysics", value: "43",  type: "suit"},
+{source: " .fsdl", target: " Correspondence", value: "85",  type: "suit"},
+{source: " Correspondence", target: " Correspondence", value: "18",  type: "suit"},
+{source: " .fsdl", target: " 2012", value: "51",  type: "suit"},
+{source: " AFE", target: " 2012", value: "18",  type: "suit"},
+{source: " .fsdl", target: " Well Schematic", value: "130",  type: "suit"},
+{source: " Insurance", target: " Insurance", value: "113",  type: "suit"},
+{source: " Commercial", target: " Insurance", value: "20",  type: "suit"},
+{source: " 2017", target: " Insurance", value: "42",  type: "suit"},
+{source: " .fsdl", target: " Mud Log Data", value: "251",  type: "suit"},
+{source: " Other", target: " Commercial", value: "39",  type: "suit"},
+{source: " 2015", target: " Commercial", value: "31",  type: "suit"},
+{source: " 2016", target: " Commercial", value: "39",  type: "suit"},
+{source: " Correspondence", target: " Commercial", value: "65",  type: "suit"},
+{source: " Commercial", target: " Commercial", value: "13",  type: "suit"},
+{source: " 2017", target: " Commercial", value: "19",  type: "suit"},
+{source: " Contracts", target: " Commercial", value: "15",  type: "suit"},
+{source: " Financial", target: " Commercial", value: "59",  type: "suit"},
+{source: " .fsdl", target: " Drilling", value: "187",  type: "suit"},
+{source: " Mudlog", target: " Drilling", value: "11",  type: "suit"},
+{source: " Wireline logs", target: " Drilling", value: "261",  type: "suit"},
+{source: " Test", target: " Drilling", value: "58",  type: "suit"},
+{source: " Forms", target: " Drilling", value: "72",  type: "suit"},
+{source: " A F E", target: " Drilling", value: "113",  type: "suit"},
+{source: " Other", target: " TECHNICAL", value: "29",  type: "suit"},
+{source: " 2014", target: " TECHNICAL", value: "84",  type: "suit"},
+{source: " 2016", target: " TECHNICAL", value: "24",  type: "suit"},
+{source: " 2011", target: " TECHNICAL", value: "11",  type: "suit"},
+{source: " .fsdl", target: " Wellbore Schematic", value: "100",  type: "suit"},
+{source: " .fsdl", target: " Daily Reports", value: "18",  type: "suit"},
+{source: " Drilling", target: " Daily Reports", value: "18",  type: "suit"},
+{source: " DDR", target: " Daily Reports", value: "182",  type: "suit"},
+{source: " DGR", target: " Daily Reports", value: "172",  type: "suit"},
+{source: " Logs", target: " Daily Reports", value: "12",  type: "suit"},
+{source: " LAS files", target: " Petrophysics", value: "43",  type: "suit"},
+{source: " Other", target: " 2017", value: "19",  type: "suit"},
+{source: " 2017", target: " 2017", value: "34",  type: "suit"},
+{source: " Tax", target: " 2017", value: "19",  type: "suit"},
+{source: " Financial", target: " 2017", value: "55",  type: "suit"},
+{source: " AFE", target: " 2017", value: "19",  type: "suit"},
+{source: " Other", target: " Well Data", value: "115",  type: "suit"},
+{source: " 2015", target: " Well Data", value: "127",  type: "suit"},
+{source: " Regulatory Information", target: " Well Data", value: "293",  type: "suit"},
+{source: " 2016", target: " Well Data", value: "38",  type: "suit"},
+{source: " LWD", target: " Well Data", value: "191",  type: "suit"},
+{source: " WCR", target: " Well Data", value: "916",  type: "suit"},
+{source: " Deviation Survey", target: " Well Data", value: "235",  type: "suit"},
+{source: " Mudlog", target: " Well Data", value: "393",  type: "suit"},
+{source: " Geophysics", target: " Well Data", value: "417",  type: "suit"},
+{source: " Well Schematic", target: " Well Data", value: "131",  type: "suit"},
+{source: " Drilling", target: " Well Data", value: "1266",  type: "suit"},
+{source: " Wellbore Schematic", target: " Well Data", value: "126",  type: "suit"},
+{source: " Daily Reports", target: " Well Data", value: "540",  type: "suit"},
+{source: " Petrophysics", target: " Well Data", value: "34",  type: "suit"},
+{source: " Reports", target: " Well Data", value: "26",  type: "suit"},
+{source: " DDR", target: " Well Data", value: "180",  type: "suit"},
+{source: " 2011", target: " Well Data", value: "15",  type: "suit"},
+{source: " Well Completion Report", target: " Well Data", value: "451",  type: "suit"},
+{source: " DGR", target: " Well Data", value: "171",  type: "suit"},
+{source: " Wireline logs", target: " Well Data", value: "390",  type: "suit"},
+{source: " Logs", target: " Well Data", value: "51",  type: "suit"},
+{source: " AFE", target: " Well Data", value: "164",  type: "suit"},
+{source: " Frac Report", target: " Well Data", value: "76",  type: "suit"},
+{source: " Flow Back Report", target: " Well Data", value: "68",  type: "suit"},
+{source: " Test", target: " Well Data", value: "611",  type: "suit"},
+{source: " Composite log", target: " Well Data", value: "86",  type: "suit"},
+{source: " Forms", target: " Well Data", value: "99",  type: "suit"},
+{source: " A F E", target: " Well Data", value: "120",  type: "suit"},
+{source: " Well and Formation Testing", target: " Well Data", value: "186",  type: "suit"},
+{source: " .fsdl", target: " Reports", value: "313",  type: "suit"},
+{source: " Other", target: " Reports", value: "25",  type: "suit"},
+{source: " 2015", target: " Reports", value: "364",  type: "suit"},
+{source: " 2014", target: " Reports", value: "329",  type: "suit"},
+{source: " 2016", target: " Reports", value: "320",  type: "suit"},
+{source: " 2013", target: " Reports", value: "150",  type: "suit"},
+{source: " Mudlog", target: " Reports", value: "14",  type: "suit"},
+{source: " Correspondence", target: " Reports", value: "15",  type: "suit"},
+{source: " 2012", target: " Reports", value: "84",  type: "suit"},
+{source: " Photos", target: " Reports", value: "26",  type: "suit"},
+{source: " Drilling", target: " Reports", value: "65",  type: "suit"},
+{source: " Daily Reports", target: " Reports", value: "11",  type: "suit"},
+{source: " 2017", target: " Reports", value: "129",  type: "suit"},
+{source: " Reports", target: " Reports", value: "26",  type: "suit"},
+{source: " DDR", target: " Reports", value: "193",  type: "suit"},
+{source: " Annual Reports", target: " Reports", value: "14",  type: "suit"},
+{source: " 2011", target: " Reports", value: "37",  type: "suit"},
+{source: " Well Completion Report", target: " Reports", value: "67",  type: "suit"},
+{source: " DGR", target: " Reports", value: "175",  type: "suit"},
+{source: " Financial", target: " Reports", value: "12",  type: "suit"},
+{source: " Logs", target: " Reports", value: "71",  type: "suit"},
+{source: " logs", target: " Reports", value: "17",  type: "suit"},
+{source: " 2010", target: " Reports", value: "38",  type: "suit"},
+{source: " Test", target: " Reports", value: "228",  type: "suit"},
+{source: " Other", target: " General", value: "13",  type: "suit"},
+{source: " Photos", target: " General", value: "12",  type: "suit"},
+{source: " Other", target: " Tax", value: "29",  type: "suit"},
+{source: " 2015", target: " Tax", value: "96",  type: "suit"},
+{source: " 2014", target: " Tax", value: "92",  type: "suit"},
+{source: " 2016", target: " Tax", value: "228",  type: "suit"},
+{source: " 2013", target: " Tax", value: "54",  type: "suit"},
+{source: " 2012", target: " Tax", value: "51",  type: "suit"},
+{source: " 2017", target: " Tax", value: "79",  type: "suit"},
+{source: " General", target: " Tax", value: "56",  type: "suit"},
+{source: " Tax", target: " Tax", value: "199",  type: "suit"},
+{source: " 2011", target: " Tax", value: "28",  type: "suit"},
+{source: " Corporate", target: " Tax", value: "12",  type: "suit"},
+{source: " 2010", target: " Tax", value: "22",  type: "suit"},
+{source: " Balance Sheet", target: " Tax", value: "13",  type: "suit"},
+{source: " Other", target: " Property", value: "452",  type: "suit"},
+{source: " Title Documents", target: " Property", value: "4997",  type: "suit"},
+{source: " 2015", target: " Property", value: "11",  type: "suit"},
+{source: " Searches", target: " Property", value: "422",  type: "suit"},
+{source: " Planning", target: " Property", value: "424",  type: "suit"},
+{source: " Reports and Certificates", target: " Property", value: "416",  type: "suit"},
+{source: " Occupational Documents", target: " Property", value: "407",  type: "suit"},
+{source: " Correspondence", target: " Property", value: "42",  type: "suit"},
+{source: " Licences and Permits", target: " Property", value: "298",  type: "suit"},
+{source: " Reports", target: " Property", value: "416",  type: "suit"},
+{source: " Licences", target: " Property", value: "310",  type: "suit"},
+{source: " 2015", target: " Annual Reports", value: "58",  type: "suit"},
+{source: " 2014", target: " Annual Reports", value: "36",  type: "suit"},
+{source: " .fsdl", target: " 2011", value: "28",  type: "suit"},
+{source: " AFE", target: " 2011", value: "14",  type: "suit"},
+{source: " .fsdl", target: " Daily Drilling Report", value: "196",  type: "suit"},
+{source: " .fsdl", target: " Permits", value: "12",  type: "suit"},
+{source: " Logs", target: " Permits", value: "20",  type: "suit"},
+{source: " Other", target: " Contracts", value: "102",  type: "suit"},
+{source: " 2016", target: " Contracts", value: "12",  type: "suit"},
+{source: " Commercial", target: " Contracts", value: "79",  type: "suit"},
+{source: " General", target: " Contracts", value: "11",  type: "suit"},
+{source: " Property", target: " Contracts", value: "28",  type: "suit"},
+{source: " Contracts", target: " Contracts", value: "19",  type: "suit"},
+{source: " Corporate", target: " Contracts", value: "14",  type: "suit"},
+{source: " Equipment", target: " Contracts", value: "13",  type: "suit"},
+{source: " Finance", target: " Contracts", value: "32",  type: "suit"},
+{source: " Other", target: " Financials", value: "106",  type: "suit"},
+{source: " 2015", target: " Financials", value: "31",  type: "suit"},
+{source: " 2014", target: " Financials", value: "29",  type: "suit"},
+{source: " 2016", target: " Financials", value: "26",  type: "suit"},
+{source: " 2013", target: " Financials", value: "15",  type: "suit"},
+{source: " 2017", target: " Financials", value: "12",  type: "suit"},
+{source: " General", target: " Financials", value: "86",  type: "suit"},
+{source: " Tax", target: " Financials", value: "63",  type: "suit"},
+{source: " Annual Reports", target: " Financials", value: "23",  type: "suit"},
+{source: " Financial", target: " Financials", value: "66",  type: "suit"},
+{source: " Balance Sheet", target: " Financials", value: "36",  type: "suit"},
+{source: " Financial Information", target: " Financials", value: "24",  type: "suit"},
+{source: " Other", target: " Financial", value: "34",  type: "suit"},
+{source: " 2015", target: " Financial", value: "376",  type: "suit"},
+{source: " 2014", target: " Financial", value: "895",  type: "suit"},
+{source: " 2016", target: " Financial", value: "272",  type: "suit"},
+{source: " 2013", target: " Financial", value: "85",  type: "suit"},
+{source: " Correspondence", target: " Financial", value: "45",  type: "suit"},
+{source: " 2012", target: " Financial", value: "49",  type: "suit"},
+{source: " 2017", target: " Financial", value: "102",  type: "suit"},
+{source: " General", target: " Financial", value: "30",  type: "suit"},
+{source: " Tax", target: " Financial", value: "38",  type: "suit"},
+{source: " 2011", target: " Financial", value: "36",  type: "suit"},
+{source: " Financial", target: " Financial", value: "166",  type: "suit"},
+{source: " AFE", target: " Financial", value: "1963",  type: "suit"},
+{source: " 2010", target: " Financial", value: "32",  type: "suit"},
+{source: " Balance Sheet", target: " Financial", value: "27",  type: "suit"},
+{source: " .fsdl", target: " Logs", value: "53",  type: "suit"},
+{source: " Mudlog", target: " Logs", value: "22",  type: "suit"},
+{source: " Petrophysics", target: " Post Drill Studies", value: "234",  type: "suit"},
+{source: " Mudlog", target: " logs", value: "11",  type: "suit"},
+{source: " 2014", target: " AFE", value: "29",  type: "suit"},
+{source: " AFE", target: " AFE", value: "15",  type: "suit"},
+{source: " .fsdl", target: " Frac Report", value: "75",  type: "suit"},
+{source: " .fsdl", target: " Flow Back Report", value: "67",  type: "suit"},
+{source: " .fsdl", target: " Plans", value: "17",  type: "suit"},
+{source: " Other", target: " Corporate", value: "15",  type: "suit"},
+{source: " 2015", target: " Corporate", value: "15",  type: "suit"},
+{source: " 2014", target: " Corporate", value: "12",  type: "suit"},
+{source: " Legal", target: " Corporate", value: "12",  type: "suit"},
+{source: " Insurance", target: " Corporate", value: "35",  type: "suit"},
+{source: " General", target: " Corporate", value: "77",  type: "suit"},
+{source: " Tax", target: " Corporate", value: "53",  type: "suit"},
+{source: " Contracts", target: " Corporate", value: "12",  type: "suit"},
+{source: " Financial", target: " Corporate", value: "15",  type: "suit"},
+{source: " Corporate Structure", target: " Corporate", value: "18",  type: "suit"},
+{source: " Certificates", target: " Corporate", value: "14",  type: "suit"},
+{source: " Corporate", target: " Corporate", value: "86",  type: "suit"},
+{source: " Finance", target: " Corporate", value: "41",  type: "suit"},
+{source: " .fsdl", target: " 2010", value: "11",  type: "suit"},
+{source: " Well Completion Report", target: " 2010", value: "66",  type: "suit"},
+{source: " Other", target: " Finance", value: "72",  type: "suit"},
+{source: " 2015", target: " Finance", value: "40",  type: "suit"},
+{source: " 2014", target: " Finance", value: "33",  type: "suit"},
+{source: " 2016", target: " Finance", value: "37",  type: "suit"},
+{source: " 2013", target: " Finance", value: "29",  type: "suit"},
+{source: " 2012", target: " Finance", value: "36",  type: "suit"},
+{source: " 2017", target: " Finance", value: "15",  type: "suit"},
+{source: " Tax", target: " Finance", value: "15",  type: "suit"},
+{source: " 2011", target: " Finance", value: "39",  type: "suit"},
+{source: " Contracts", target: " Finance", value: "16",  type: "suit"},
+{source: " Financial", target: " Finance", value: "25",  type: "suit"},
+{source: " AFE", target: " Finance", value: "222",  type: "suit"},
+{source: " 2010", target: " Finance", value: "25",  type: "suit"},
+{source: " Finance", target: " Finance", value: "28",  type: "suit"},
+{source: " 2012", target: " Financial Information", value: "13",  type: "suit"},
+{source: " Tax", target: " Financial Information", value: "50",  type: "suit"},
+{source: " 2011", target: " Financial Information", value: "13",  type: "suit"},
+{source: " Financial", target: " Financial Information", value: "84",  type: "suit"},
+{source: " Balance Sheet", target: " Financial Information", value: "17",  type: "suit"},
+{source: " Financial Information", target: " Financial Information", value: "44",  type: "suit"},
+{source: " 2015", target: " Capex", value: "127",  type: "suit"},
+{source: " 2016", target: " Capex", value: "31",  type: "suit"},
+{source: " Licences", target: " Licences", value: "22",  type: "suit"},
+{source: " Correspondence", target: " Predrill", value: "87",  type: "suit"},
+{source: " Drill Program", target: " Predrill", value: "115",  type: "suit"},
+{source: " AFE", target: " Predrill", value: "87",  type: "suit"},
+{source: " Correspondence", target: " End of Well_Ongoing Well Activities", value: "11",  type: "suit"},
+{source: " Other", target: " Operations", value: "158",  type: "suit"},
+{source: " 2015", target: " Operations", value: "89",  type: "suit"},
+{source: " 2014", target: " Operations", value: "111",  type: "suit"},
+{source: " 2016", target: " Operations", value: "109",  type: "suit"},
+{source: " 2013", target: " Operations", value: "63",  type: "suit"},
+{source: " 2012", target: " Operations", value: "77",  type: "suit"},
+{source: " Reports", target: " Operations", value: "171",  type: "suit"},
+{source: " General", target: " Operations", value: "17",  type: "suit"},
+{source: " 2011", target: " Operations", value: "62",  type: "suit"},
+{source: " Contracts", target: " Operations", value: "20",  type: "suit"},
+{source: " Financial", target: " Operations", value: "98",  type: "suit"},
+{source: " Corporate", target: " Operations", value: "61",  type: "suit"},
+{source: " 2010", target: " Operations", value: "19",  type: "suit"},
+{source: " Operations", target: " Operations", value: "80",  type: "suit"},
+{source: " Environmental", target: " Operations", value: "413",  type: "suit"},
+{source: " 2015", target: " Environmental", value: "17",  type: "suit"},
+{source: " 2014", target: " Environmental", value: "18",  type: "suit"},
+{source: " 2016", target: " Environmental", value: "83",  type: "suit"},
+{source: " 2013", target: " Environmental", value: "14",  type: "suit"},
+{source: " Permits", target: " Environmental", value: "94",  type: "suit"},
+{source: " Environmental", target: " Environmental", value: "90",  type: "suit"},
+
+];
+var nodes = {};
+// Compute the distinct nodes from the links.
+links.forEach(function(link) {
+  link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+  link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+});
+var w = 2880,
+    h = 2880;
+var force = d3.layout.force()
+    .nodes(d3.values(nodes))
+    .links(links)
+    .size([w, h])
+    .linkDistance(120)
+    .linkStrength(1)
+    .charge(-700)
+    .on("tick", tick)
+    .start();
+var svg = d3.select("body").append("svg:svg")
+    .attr("width", w)
+    .attr("height", h);
+// Per-type markers, as they don't inherit styles.
+svg.append("svg:defs").selectAll("marker")
+    .data(["suit", "licensing", "resolved"])
+  .enter().append("svg:marker")
+    .attr("id", String)
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 15)
+    .attr("refY", -1.5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+  .append("svg:path")
+    .attr("d", "M0,-5L10,0L0,5");
+    var link = svg.append("svg:g").selectAll("g.link")
+        .data(force.links())
+      .enter().append('g')
+        .attr('class', 'link');
+    
+    var linkPath = link.append("svg:path")
+        .attr("class", function(d) { return "link " + d.type; })
+        .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
+    
+    var textPath = link.append("svg:path")
+        .attr("id", function(d) { return d.source.index + "_" + d.target.index; })
+        .attr("class", "textpath");
+var circle = svg.append("svg:g").selectAll("circle")
+    .data(force.nodes())
+  .enter().append("svg:circle")
+    .attr("r", 6)
+    .call(force.drag);
+var text = svg.append("svg:g").selectAll("g")
+    .data(force.nodes())
+  .enter().append("svg:g");
+// A copy of the text with a thick white stroke for legibility.
+text.append("svg:text")
+    .attr("x", 8)
+    .attr("y", ".31em")
+    .attr("class", "shadow")
+    .text(function(d) { return d.name; });
+text.append("svg:text")
+    .attr("x", 8)
+    .attr("y", ".31em")
+    .text(function(d) { return d.name; });
+var path_label = svg.append("svg:g").selectAll(".path_label")
+    .data(force.links())
+  .enter().append("svg:text")
+    .attr("class", "path_label")
+    .append("svg:textPath")
+      .attr("startOffset", "50%")
+      .attr("text-anchor", "middle")
+      .attr("xlink:href", function(d) { return "#" + d.source.index + "_" + d.target.index; })
+      .style("fill", "#000")
+      .style("font-family", "Arial")
+      .style("font-size","10px")
+      .text(function(d) { return d.value; });
+    function arcPath(leftHand, d) {
+        var start = leftHand ? d.source : d.target,
+            end = leftHand ? d.target : d.source,
+            dx = end.x - start.x,
+            dy = end.y - start.y,
+            dr = Math.sqrt(dx * dx + dy * dy),
+            sweep = leftHand ? 0 : 1;
+        return "M" + start.x + "," + start.y + "A" + dr + "," + dr + " 0 0," + sweep + " " + end.x + "," + end.y;
+    }
+// Use elliptical arc path segments to doubly-encode directionality.
+function tick() {
+  linkPath.attr("d", function(d) {
+    return arcPath(false, d);
+  });
+    
+  textPath.attr("d", function(d) {
+    return arcPath(d.source.x < d.target.x, d);
+  });
+  circle.attr("transform", function(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  });
+  text.attr("transform", function(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  });
+}
+</script>

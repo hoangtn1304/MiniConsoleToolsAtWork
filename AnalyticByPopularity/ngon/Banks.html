@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body></body>
+<style>
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+path.textpath {
+    fill: none;
+    stroke: none;
+}
+marker#licensing {
+  fill: green;
+}
+path.link.licensing {
+  stroke: green;
+}
+path.link.resolved {
+  stroke-dasharray: 0,2 1;
+}
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+text.shadow {
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: .8;
+}
+</style>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+// http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
+var links = [
+{source: " 1. Loan Documents", target: " 1. Finance Documents", value: "151",  type: "suit"},
+{source: " 2. Security Documents", target: " 1. Finance Documents", value: "717",  type: "suit"},
+{source: " 1. Mortgage", target: " 1. Finance Documents", value: "417",  type: "suit"},
+{source: " 2. Other Securities", target: " 1. Finance Documents", value: "77",  type: "suit"},
+{source: " 2. Other", target: " 1. Finance Documents", value: "145",  type: "suit"},
+{source: " 2. Mortgage Register", target: " 1. Finance Documents", value: "112",  type: "suit"},
+{source: " 3. Other", target: " 1. Finance Documents", value: "121",  type: "suit"},
+{source: " 1. Mortgage Deed", target: " 1. Finance Documents", value: "123",  type: "suit"},
+{source: " 1. Mortgage Deeds", target: " 1. Finance Documents", value: "27",  type: "suit"},
+{source: " 1. Mortgage", target: " 2. Security Documents", value: "557",  type: "suit"},
+{source: " 2. Other Securities", target: " 2. Security Documents", value: "77",  type: "suit"},
+{source: " 2. Other", target: " 2. Security Documents", value: "145",  type: "suit"},
+{source: " 2. Mortgage Register", target: " 2. Security Documents", value: "112",  type: "suit"},
+{source: " 1. Mortgage Deed", target: " 2. Security Documents", value: "123",  type: "suit"},
+{source: " 1. Mortgage Deeds", target: " 2. Security Documents", value: "27",  type: "suit"},
+{source: " 1. Cadastral information", target: " 3. Real Estate Information", value: "86",  type: "suit"},
+{source: " 5. Other", target: " 3. Real Estate Information", value: "130",  type: "suit"},
+{source: " 4. Lease agreements", target: " 3. Real Estate Information", value: "91",  type: "suit"},
+{source: " 3. Rent Roll", target: " 3. Real Estate Information", value: "121",  type: "suit"},
+{source: " 1. Mortgage", target: " 1. Mortgage", value: "140",  type: "suit"},
+{source: " 2. Mortgage Register", target: " 1. Mortgage", value: "112",  type: "suit"},
+{source: " 1. Mortgage Deed", target: " 1. Mortgage", value: "123",  type: "suit"},
+{source: " 1. Mortgage Deeds", target: " 1. Mortgage", value: "27",  type: "suit"},
+{source: " 2. Other", target: " 4. Borrower Information", value: "142",  type: "suit"},
+{source: " 1. Financial Information", target: " 4. Borrower Information", value: "106",  type: "suit"},
+{source: " 1. Financial", target: " 4. Borrower Information", value: "134",  type: "suit"},
+{source: " 1. Correspondence", target: " 5. Correspondence", value: "24",  type: "suit"},
+{source: " 2015", target: " 2015", value: "111",  type: "suit"},
+{source: " Correspondence", target: " Correspondence", value: "22",  type: "suit"},
+{source: " 1. Correspondence", target: " Correspondence", value: "24",  type: "suit"},
+{source: " 1. Mortgage", target: " Mortgage", value: "140",  type: "suit"},
+{source: " 2. Mortgage Register", target: " Mortgage", value: "112",  type: "suit"},
+{source: " 1. Mortgage Deed", target: " Mortgage", value: "123",  type: "suit"},
+{source: " Mortgage", target: " Mortgage", value: "100",  type: "suit"},
+{source: " Mortgage Register", target: " Mortgage", value: "30",  type: "suit"},
+{source: " 1. Mortgage Deeds", target: " Mortgage", value: "27",  type: "suit"},
+{source: " Other", target: " Real Estate Information", value: "41",  type: "suit"},
+{source: " 1. Cadastral information", target: " Real Estate Information", value: "86",  type: "suit"},
+{source: " 5. Other", target: " Real Estate Information", value: "130",  type: "suit"},
+{source: " 4. Lease agreements", target: " Real Estate Information", value: "91",  type: "suit"},
+{source: " 3. Rent Roll", target: " Real Estate Information", value: "121",  type: "suit"},
+{source: " Lease agreements", target: " Real Estate Information", value: "31",  type: "suit"},
+{source: " Cadastral information", target: " Real Estate Information", value: "34",  type: "suit"},
+{source: " 1. Mortgage", target: " Security Documents", value: "557",  type: "suit"},
+{source: " 2. Other Securities", target: " Security Documents", value: "77",  type: "suit"},
+{source: " Other", target: " Security Documents", value: "64",  type: "suit"},
+{source: " 2. Other", target: " Security Documents", value: "145",  type: "suit"},
+{source: " 2. Mortgage Register", target: " Security Documents", value: "112",  type: "suit"},
+{source: " 1. Mortgage Deed", target: " Security Documents", value: "123",  type: "suit"},
+{source: " Mortgage", target: " Security Documents", value: "272",  type: "suit"},
+{source: " Other Securities", target: " Security Documents", value: "33",  type: "suit"},
+{source: " Mortgage Register", target: " Security Documents", value: "30",  type: "suit"},
+{source: " 1. Mortgage Deeds", target: " Security Documents", value: "27",  type: "suit"},
+{source: " 2016", target: " 2016", value: "17",  type: "suit"},
+{source: " Other", target: " Borrower Information", value: "50",  type: "suit"},
+{source: " 2. Other", target: " Borrower Information", value: "142",  type: "suit"},
+{source: " 1. Financial Information", target: " Borrower Information", value: "106",  type: "suit"},
+{source: " Financial Information", target: " Borrower Information", value: "36",  type: "suit"},
+{source: " Financial", target: " Borrower Information", value: "40",  type: "suit"},
+{source: " 1. Financial", target: " Borrower Information", value: "134",  type: "suit"},
+{source: " A.8  Documenten info clientenonderzoek", target: " A Clientgegevens", value: "28",  type: "suit"},
+{source: " A.1 Client Intake Formulier", target: " A Clientgegevens", value: "25",  type: "suit"},
+{source: " A.2 Gespreksverslagen", target: " A Clientgegevens", value: "19",  type: "suit"},
+{source: " A.3  CDD Revisies", target: " A Clientgegevens", value: "14",  type: "suit"},
+{source: " A.5 Uittreksel  KVK", target: " A Clientgegevens", value: "18",  type: "suit"},
+{source: " A.6 Statuten", target: " A Clientgegevens", value: "14",  type: "suit"},
+{source: " C 12  Externe post incl e-mail", target: " C Correspondentie", value: "20",  type: "suit"},
+{source: " C 13 Interne Post  incl e-mail", target: " C Correspondentie", value: "21",  type: "suit"},
+{source: " E 17 Overeenkomsten en contracten", target: " E Basic Banking", value: "24",  type: "suit"},
+{source: " F19 Opal vragenlijst beleggingsprofiel opal analyse", target: " F Beleggen", value: "18",  type: "suit"},
+{source: " F 20 Beleggingsvoorstel", target: " F Beleggen", value: "14",  type: "suit"},
+{source: " F21 Kopie overeenkomst", target: " F Beleggen", value: "14",  type: "suit"},
+{source: " B.10 Jaarcijfers", target: " B Financieele gegevens bron van vermogen", value: "16",  type: "suit"},
+{source: " A Clientgegevens", target: " Compliance", value: "175",  type: "suit"},
+{source: " A.8  Documenten info clientenonderzoek", target: " Compliance", value: "28",  type: "suit"},
+{source: " C Correspondentie", target: " Compliance", value: "71",  type: "suit"},
+{source: " A.1 Client Intake Formulier", target: " Compliance", value: "25",  type: "suit"},
+{source: " E Basic Banking", target: " Compliance", value: "54",  type: "suit"},
+{source: " E 17 Overeenkomsten en contracten", target: " Compliance", value: "24",  type: "suit"},
+{source: " F Beleggen", target: " Compliance", value: "99",  type: "suit"},
+{source: " A.2 Gespreksverslagen", target: " Compliance", value: "19",  type: "suit"},
+{source: " B Financieele gegevens bron van vermogen", target: " Compliance", value: "56",  type: "suit"},
+{source: " C 12  Externe post incl e-mail", target: " Compliance", value: "20",  type: "suit"},
+{source: " Compliance", target: " Compliance", value: "31",  type: "suit"},
+{source: " C 13 Interne Post  incl e-mail", target: " Compliance", value: "21",  type: "suit"},
+{source: " F19 Opal vragenlijst beleggingsprofiel opal analyse", target: " Compliance", value: "18",  type: "suit"},
+{source: " A.3  CDD Revisies", target: " Compliance", value: "14",  type: "suit"},
+{source: " B.10 Jaarcijfers", target: " Compliance", value: "16",  type: "suit"},
+{source: " A.5 Uittreksel  KVK", target: " Compliance", value: "18",  type: "suit"},
+{source: " Tax", target: " Compliance", value: "73",  type: "suit"},
+{source: " Banque Morval", target: " Compliance", value: "29",  type: "suit"},
+{source: " F 20 Beleggingsvoorstel", target: " Compliance", value: "14",  type: "suit"},
+{source: " FIGE", target: " Compliance", value: "27",  type: "suit"},
+{source: " F21 Kopie overeenkomst", target: " Compliance", value: "14",  type: "suit"},
+{source: " SIM", target: " Compliance", value: "35",  type: "suit"},
+{source: " A.6 Statuten", target: " Compliance", value: "14",  type: "suit"},
+{source: " Minutes", target: " 2012", value: "11",  type: "suit"},
+{source: " 2015", target: " Financial", value: "17",  type: "suit"},
+{source: " 2014", target: " Financial", value: "16",  type: "suit"},
+{source: " 2016", target: " Financial", value: "12",  type: "suit"},
+{source: " 2013", target: " Financial", value: "14",  type: "suit"},
+{source: " 2015", target: " Tax", value: "12",  type: "suit"},
+{source: " 2014", target: " Tax", value: "11",  type: "suit"},
+{source: " Tax", target: " Tax", value: "66",  type: "suit"},
+{source: " FIGE", target: " Tax", value: "17",  type: "suit"},
+{source: " SIM", target: " Tax", value: "21",  type: "suit"},
+{source: " 2015", target: " Minutes", value: "15",  type: "suit"},
+{source: " 2016", target: " Minutes", value: "14",  type: "suit"},
+{source: " Minutes", target: " Minutes", value: "12",  type: "suit"},
+{source: " 2015", target: " Regulatory", value: "130",  type: "suit"},
+{source: " Correspondence", target: " Regulatory", value: "50",  type: "suit"},
+{source: " 2016", target: " Regulatory", value: "19",  type: "suit"},
+{source: " 2017", target: " Regulatory", value: "27",  type: "suit"},
+{source: " Regulatory", target: " Regulatory", value: "182",  type: "suit"},
+{source: " IT", target: " IT", value: "12",  type: "suit"},
+
+];
+var nodes = {};
+// Compute the distinct nodes from the links.
+links.forEach(function(link) {
+  link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+  link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+});
+var w = 2880,
+    h = 2880;
+var force = d3.layout.force()
+    .nodes(d3.values(nodes))
+    .links(links)
+    .size([w, h])
+    .linkDistance(120)
+    .linkStrength(1)
+    .charge(-700)
+    .on("tick", tick)
+    .start();
+var svg = d3.select("body").append("svg:svg")
+    .attr("width", w)
+    .attr("height", h);
+// Per-type markers, as they don't inherit styles.
+svg.append("svg:defs").selectAll("marker")
+    .data(["suit", "licensing", "resolved"])
+  .enter().append("svg:marker")
+    .attr("id", String)
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 15)
+    .attr("refY", -1.5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+  .append("svg:path")
+    .attr("d", "M0,-5L10,0L0,5");
+    var link = svg.append("svg:g").selectAll("g.link")
+        .data(force.links())
+      .enter().append('g')
+        .attr('class', 'link');
+    
+    var linkPath = link.append("svg:path")
+        .attr("class", function(d) { return "link " + d.type; })
+        .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
+    
+    var textPath = link.append("svg:path")
+        .attr("id", function(d) { return d.source.index + "_" + d.target.index; })
+        .attr("class", "textpath");
+var circle = svg.append("svg:g").selectAll("circle")
+    .data(force.nodes())
+  .enter().append("svg:circle")
+    .attr("r", 6)
+    .call(force.drag);
+var text = svg.append("svg:g").selectAll("g")
+    .data(force.nodes())
+  .enter().append("svg:g");
+// A copy of the text with a thick white stroke for legibility.
+text.append("svg:text")
+    .attr("x", 8)
+    .attr("y", ".31em")
+    .attr("class", "shadow")
+    .text(function(d) { return d.name; });
+text.append("svg:text")
+    .attr("x", 8)
+    .attr("y", ".31em")
+    .text(function(d) { return d.name; });
+var path_label = svg.append("svg:g").selectAll(".path_label")
+    .data(force.links())
+  .enter().append("svg:text")
+    .attr("class", "path_label")
+    .append("svg:textPath")
+      .attr("startOffset", "50%")
+      .attr("text-anchor", "middle")
+      .attr("xlink:href", function(d) { return "#" + d.source.index + "_" + d.target.index; })
+      .style("fill", "#000")
+      .style("font-family", "Arial")
+      .style("font-size","10px")
+      .text(function(d) { return d.value; });
+    function arcPath(leftHand, d) {
+        var start = leftHand ? d.source : d.target,
+            end = leftHand ? d.target : d.source,
+            dx = end.x - start.x,
+            dy = end.y - start.y,
+            dr = Math.sqrt(dx * dx + dy * dy),
+            sweep = leftHand ? 0 : 1;
+        return "M" + start.x + "," + start.y + "A" + dr + "," + dr + " 0 0," + sweep + " " + end.x + "," + end.y;
+    }
+// Use elliptical arc path segments to doubly-encode directionality.
+function tick() {
+  linkPath.attr("d", function(d) {
+    return arcPath(false, d);
+  });
+    
+  textPath.attr("d", function(d) {
+    return arcPath(d.source.x < d.target.x, d);
+  });
+  circle.attr("transform", function(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  });
+  text.attr("transform", function(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  });
+}
+</script>

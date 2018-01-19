@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body></body>
+<style>
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+path.textpath {
+    fill: none;
+    stroke: none;
+}
+marker#licensing {
+  fill: green;
+}
+path.link.licensing {
+  stroke: green;
+}
+path.link.resolved {
+  stroke-dasharray: 0,2 1;
+}
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+text.shadow {
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: .8;
+}
+</style>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+// http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
+var links = [
+{source: " 2015", target: " 2015", value: "168",  type: "suit"},
+{source: " 2016", target: " 2016", value: "60",  type: "suit"},
+{source: " Insurance", target: " Legal", value: "27",  type: "suit"},
+{source: " General", target: " Legal", value: "11",  type: "suit"},
+{source: " Other", target: " Legal", value: "13",  type: "suit"},
+{source: " Intellectual Property", target: " Legal", value: "27",  type: "suit"},
+{source: " Tax", target: " Legal", value: "16",  type: "suit"},
+{source: " Environmental", target: " Legal", value: "12",  type: "suit"},
+{source: " Property", target: " Legal", value: "40",  type: "suit"},
+{source: " Contracts", target: " Legal", value: "11",  type: "suit"},
+{source: " Litigation", target: " Legal", value: "33",  type: "suit"},
+{source: " Employees", target: " Legal", value: "13",  type: "suit"},
+{source: " Environment", target: " Legal", value: "23",  type: "suit"},
+{source: " Employment", target: " Legal", value: "27",  type: "suit"},
+{source: " Assets", target: " Legal", value: "12",  type: "suit"},
+{source: " IT", target: " Legal", value: "23",  type: "suit"},
+{source: " Agreements", target: " Legal", value: "14",  type: "suit"},
+{source: " Finance", target: " Legal", value: "14",  type: "suit"},
+{source: " Response:", target: " General", value: "62",  type: "suit"},
+{source: " LG2", target: " General", value: "48",  type: "suit"},
+{source: " LG1", target: " General", value: "65",  type: "suit"},
+{source: " GRD", target: " General", value: "70",  type: "suit"},
+{source: " BP2", target: " General", value: "11",  type: "suit"},
+{source: " 03 LG1", target: " General", value: "12",  type: "suit"},
+{source: " 05 Level 1", target: " General", value: "12",  type: "suit"},
+{source: " 06 Level 2", target: " General", value: "12",  type: "suit"},
+{source: " 04 GRD", target: " General", value: "12",  type: "suit"},
+{source: " 02 LG2", target: " General", value: "12",  type: "suit"},
+{source: " 01 BP2", target: " General", value: "12",  type: "suit"},
+{source: " 2014", target: " 2014", value: "31",  type: "suit"},
+{source: " FY15", target: " Financials", value: "121",  type: "suit"},
+{source: " FY14", target: " Financials", value: "103",  type: "suit"},
+{source: " 2015", target: " Financials", value: "48",  type: "suit"},
+{source: " 2016", target: " Financials", value: "42",  type: "suit"},
+{source: " FY16", target: " Financials", value: "56",  type: "suit"},
+{source: " Forecast FY16 - 18", target: " Financials", value: "43",  type: "suit"},
+{source: " 2017", target: " Financials", value: "41",  type: "suit"},
+{source: " Tax", target: " Financials", value: "75",  type: "suit"},
+{source: " Management Accounts", target: " Financials", value: "226",  type: "suit"},
+{source: " Marketing", target: " Financials", value: "11",  type: "suit"},
+{source: " Forres", target: " Financials", value: "12",  type: "suit"},
+{source: " Financial", target: " Financials", value: "84",  type: "suit"},
+{source: " 2013", target: " 2013", value: "32",  type: "suit"},
+{source: " FY15", target: " Tax", value: "12",  type: "suit"},
+{source: " Tax", target: " Tax", value: "30",  type: "suit"},
+{source: " Employment", target: " Tax", value: "12",  type: "suit"},
+{source: " VAT", target: " Tax", value: "54",  type: "suit"},
+{source: " LG2", target: " LG2", value: "96",  type: "suit"},
+{source: " LG1", target: " LG1", value: "81",  type: "suit"},
+{source: " Invoices", target: " Contracts", value: "19",  type: "suit"},
+{source: " FY15", target: " Management Accounts", value: "38",  type: "suit"},
+{source: " FY14", target: " Management Accounts", value: "36",  type: "suit"},
+{source: " FY16", target: " Management Accounts", value: "41",  type: "suit"},
+{source: " Forecast FY16 - 18", target: " Management Accounts", value: "43",  type: "suit"},
+{source: " Legal", target: " LEASES", value: "17",  type: "suit"},
+{source: " LG2", target: " LEASES", value: "62",  type: "suit"},
+{source: " LG1", target: " LEASES", value: "51",  type: "suit"},
+{source: " GRD", target: " LEASES", value: "47",  type: "suit"},
+{source: " Response:", target: " Suppliers", value: "25",  type: "suit"},
+{source: " Invoices", target: " Operations", value: "19",  type: "suit"},
+{source: " Contracts", target: " Operations", value: "274",  type: "suit"},
+{source: " Operations", target: " Operations", value: "321",  type: "suit"},
+{source: " Architectural", target: " Operations", value: "33",  type: "suit"},
+{source: " Master", target: " Operations", value: "18",  type: "suit"},
+{source: " Fire", target: " Operations", value: "26",  type: "suit"},
+{source: " FY15", target: " Financial", value: "38",  type: "suit"},
+{source: " FY14", target: " Financial", value: "20",  type: "suit"},
+{source: " FY16", target: " Financial", value: "40",  type: "suit"},
+{source: " Other", target: " Financial", value: "18",  type: "suit"},
+{source: " Tax", target: " Financial", value: "17",  type: "suit"},
+{source: " Management Accounts", target: " Financial", value: "53",  type: "suit"},
+{source: " Financial", target: " Financial", value: "14",  type: "suit"},
+{source: " Balance Sheet", target: " Financial", value: "47",  type: "suit"},
+{source: " GRD", target: " GRD", value: "81",  type: "suit"},
+{source: " IT", target: " Information Technology", value: "59",  type: "suit"},
+{source: " Invoices", target: " Archive", value: "19",  type: "suit"},
+{source: " Contracts", target: " Archive", value: "230",  type: "suit"},
+{source: " Operations", target: " Archive", value: "35",  type: "suit"},
+{source: " Architectural", target: " Archive", value: "28",  type: "suit"},
+{source: " Land Registry Title", target: " Real Estate", value: "54",  type: "suit"},
+{source: " Invoices", target: " Agreements", value: "19",  type: "suit"},
+{source: " Contracts", target: " Agreements", value: "270",  type: "suit"},
+{source: " 2015", target: " Finance", value: "95",  type: "suit"},
+{source: " 2016", target: " Finance", value: "55",  type: "suit"},
+{source: " 2014", target: " Finance", value: "101",  type: "suit"},
+{source: " 2013", target: " Finance", value: "114",  type: "suit"},
+{source: " 2012", target: " Finance", value: "34",  type: "suit"},
+{source: " Purchases", target: " Finance", value: "14",  type: "suit"},
+
+];
+var nodes = {};
+// Compute the distinct nodes from the links.
+links.forEach(function(link) {
+  link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+  link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+});
+var w = 2880,
+    h = 2880;
+var force = d3.layout.force()
+    .nodes(d3.values(nodes))
+    .links(links)
+    .size([w, h])
+    .linkDistance(120)
+    .linkStrength(1)
+    .charge(-700)
+    .on("tick", tick)
+    .start();
+var svg = d3.select("body").append("svg:svg")
+    .attr("width", w)
+    .attr("height", h);
+// Per-type markers, as they don't inherit styles.
+svg.append("svg:defs").selectAll("marker")
+    .data(["suit", "licensing", "resolved"])
+  .enter().append("svg:marker")
+    .attr("id", String)
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 15)
+    .attr("refY", -1.5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+  .append("svg:path")
+    .attr("d", "M0,-5L10,0L0,5");
+    var link = svg.append("svg:g").selectAll("g.link")
+        .data(force.links())
+      .enter().append('g')
+        .attr('class', 'link');
+    
+    var linkPath = link.append("svg:path")
+        .attr("class", function(d) { return "link " + d.type; })
+        .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
+    
+    var textPath = link.append("svg:path")
+        .attr("id", function(d) { return d.source.index + "_" + d.target.index; })
+        .attr("class", "textpath");
+var circle = svg.append("svg:g").selectAll("circle")
+    .data(force.nodes())
+  .enter().append("svg:circle")
+    .attr("r", 6)
+    .call(force.drag);
+var text = svg.append("svg:g").selectAll("g")
+    .data(force.nodes())
+  .enter().append("svg:g");
+// A copy of the text with a thick white stroke for legibility.
+text.append("svg:text")
+    .attr("x", 8)
+    .attr("y", ".31em")
+    .attr("class", "shadow")
+    .text(function(d) { return d.name; });
+text.append("svg:text")
+    .attr("x", 8)
+    .attr("y", ".31em")
+    .text(function(d) { return d.name; });
+var path_label = svg.append("svg:g").selectAll(".path_label")
+    .data(force.links())
+  .enter().append("svg:text")
+    .attr("class", "path_label")
+    .append("svg:textPath")
+      .attr("startOffset", "50%")
+      .attr("text-anchor", "middle")
+      .attr("xlink:href", function(d) { return "#" + d.source.index + "_" + d.target.index; })
+      .style("fill", "#000")
+      .style("font-family", "Arial")
+      .style("font-size","10px")
+      .text(function(d) { return d.value; });
+    function arcPath(leftHand, d) {
+        var start = leftHand ? d.source : d.target,
+            end = leftHand ? d.target : d.source,
+            dx = end.x - start.x,
+            dy = end.y - start.y,
+            dr = Math.sqrt(dx * dx + dy * dy),
+            sweep = leftHand ? 0 : 1;
+        return "M" + start.x + "," + start.y + "A" + dr + "," + dr + " 0 0," + sweep + " " + end.x + "," + end.y;
+    }
+// Use elliptical arc path segments to doubly-encode directionality.
+function tick() {
+  linkPath.attr("d", function(d) {
+    return arcPath(false, d);
+  });
+    
+  textPath.attr("d", function(d) {
+    return arcPath(d.source.x < d.target.x, d);
+  });
+  circle.attr("transform", function(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  });
+  text.attr("transform", function(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  });
+}
+</script>

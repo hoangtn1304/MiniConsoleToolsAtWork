@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7E61A7B6-5904-45FF-B3F4-CC0F9ACB033A}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>FolderRelationshipCreator</RootNamespace>
+    <AssemblyName>FolderRelationshipCreator</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CsvHelper\CsvFileReader.cs" />
+    <Compile Include="CsvHelper\CsvFileWriter.cs" />
+    <Compile Include="CsvHelper\CsvRow.cs" />
+    <Compile Include="FolderParentChildPair.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="data\Automobiles &amp; Components.txt" />
+    <Content Include="data\Banks.txt" />
+    <Content Include="data\Capital Goods.txt" />
+    <Content Include="data\Commercial &amp; Professional Services.txt" />
+    <Content Include="data\Consumer Durables &amp; Apparel.txt" />
+    <Content Include="data\Consumer Services.txt" />
+    <Content Include="data\Diversified Financials.txt" />
+    <Content Include="data\Energy.txt" />
+    <Content Include="data\Food &amp; Staples Retailing.txt" />
+    <Content Include="data\Food, Beverage &amp; Tobacco.txt" />
+    <Content Include="data\Health Care Equipment &amp; Services.txt" />
+    <Content Include="data\Household &amp; Personal Products.txt" />
+    <Content Include="data\Insurance.txt" />
+    <Content Include="data\Materials.txt" />
+    <Content Include="data\Media.txt" />
+    <Content Include="data\Pharmaceuticals, Biotechnology &amp; Life Sciences.txt" />
+    <Content Include="data\Real Estate.txt" />
+    <Content Include="data\Retailing.txt" />
+    <Content Include="data\Semiconductors &amp; Semiconductor Equipment.txt" />
+    <Content Include="data\Software &amp; Services.txt" />
+    <Content Include="data\Technology Hardware &amp; Equipment.txt" />
+    <Content Include="data\Telecommunication Services.txt" />
+    <Content Include="data\Transportation.txt" />
+    <Content Include="data\Utilities.txt" />
+    <Content Include="template\index.html" />
+    <Content Include="test\Software &amp; Services.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

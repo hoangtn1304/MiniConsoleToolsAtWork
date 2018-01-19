@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body></body>
+<style>
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+path.textpath {
+    fill: none;
+    stroke: none;
+}
+marker#licensing {
+  fill: green;
+}
+path.link.licensing {
+  stroke: green;
+}
+path.link.resolved {
+  stroke-dasharray: 0,2 1;
+}
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+text.shadow {
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: .8;
+}
+</style>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+// http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
+var links = [
+{source: " 05", target: " 2014", value: "11",  type: "suit"},
+{source: " 06", target: " 2014", value: "15",  type: "suit"},
+{source: " 10", target: " 2014", value: "18",  type: "suit"},
+{source: " 11", target: " 2014", value: "18",  type: "suit"},
+{source: " 01", target: " 2014", value: "11",  type: "suit"},
+{source: " 02", target: " 2014", value: "11",  type: "suit"},
+{source: " 03", target: " 2014", value: "12",  type: "suit"},
+{source: " 04", target: " 2014", value: "11",  type: "suit"},
+{source: " 12", target: " 2014", value: "19",  type: "suit"},
+{source: " 05", target: " 2013", value: "11",  type: "suit"},
+{source: " 06", target: " 2013", value: "11",  type: "suit"},
+{source: " 10", target: " 2013", value: "13",  type: "suit"},
+{source: " 01", target: " 2013", value: "11",  type: "suit"},
+{source: " 03", target: " 2013", value: "11",  type: "suit"},
+{source: " 04", target: " 2013", value: "11",  type: "suit"},
+{source: " Insurance", target: " Insurance", value: "323",  type: "suit"},
+{source: " 2015", target: " Insurance", value: "17",  type: "suit"},
+{source: " Property", target: " Insurance", value: "14",  type: "suit"},
+{source: " Construction", target: " Insurance", value: "15",  type: "suit"},
+{source: " Financial Statements", target: " Insurance", value: "70",  type: "suit"},
+{source: " Financial", target: " Insurance", value: "129",  type: "suit"},
+{source: " Claims", target: " Insurance", value: "20",  type: "suit"},
+{source: " 08", target: " Insurance", value: "24",  type: "suit"},
+{source: " 05", target: " Insurance", value: "16",  type: "suit"},
+{source: " Superseded", target: " Insurance", value: "17",  type: "suit"},
+{source: " Directors", target: " Insurance", value: "14",  type: "suit"},
+{source: " 2015", target: " 2015", value: "11",  type: "suit"},
+{source: " 10", target: " 2015", value: "19",  type: "suit"},
+{source: " 11", target: " 2015", value: "14",  type: "suit"},
+{source: " 01", target: " 2015", value: "11",  type: "suit"},
+{source: " 12", target: " 2015", value: "27",  type: "suit"},
+{source: " 12", target: " 2012", value: "14",  type: "suit"},
+{source: " Insurance", target: " Legal", value: "535",  type: "suit"},
+{source: " Articles of Association", target: " Legal", value: "76",  type: "suit"},
+{source: " Legal", target: " Legal", value: "112",  type: "suit"},
+{source: " 2016", target: " Legal", value: "15",  type: "suit"},
+{source: " Planning", target: " Legal", value: "12",  type: "suit"},
+{source: " Lease", target: " Legal", value: "59",  type: "suit"},
+{source: " Other", target: " Legal", value: "88",  type: "suit"},
+{source: " Property", target: " Legal", value: "456",  type: "suit"},
+{source: " Corporate", target: " Legal", value: "458",  type: "suit"},
+{source: " Material contracts", target: " Legal", value: "33",  type: "suit"},
+{source: " Environmental", target: " Legal", value: "70",  type: "suit"},
+{source: " 2017", target: " Legal", value: "12",  type: "suit"},
+{source: " EPC", target: " Legal", value: "37",  type: "suit"},
+{source: " Contracts", target: " Legal", value: "1061",  type: "suit"},
+{source: " O&M", target: " Legal", value: "39",  type: "suit"},
+{source: " Financial", target: " Legal", value: "13",  type: "suit"},
+{source: " Intellectual Property", target: " Legal", value: "215",  type: "suit"},
+{source: " Claims", target: " Legal", value: "81",  type: "suit"},
+{source: " 08", target: " Legal", value: "36",  type: "suit"},
+{source: " 07", target: " Legal", value: "86",  type: "suit"},
+{source: " 05", target: " Legal", value: "234",  type: "suit"},
+{source: " 06", target: " Legal", value: "165",  type: "suit"},
+{source: " 10", target: " Legal", value: "31",  type: "suit"},
+{source: " Certificates of Incorporation", target: " Legal", value: "74",  type: "suit"},
+{source: " 11", target: " Legal", value: "34",  type: "suit"},
+{source: " 01", target: " Legal", value: "334",  type: "suit"},
+{source: " 02", target: " Legal", value: "263",  type: "suit"},
+{source: " 03", target: " Legal", value: "165",  type: "suit"},
+{source: " Certificates", target: " Legal", value: "78",  type: "suit"},
+{source: " 04", target: " Legal", value: "174",  type: "suit"},
+{source: " 09", target: " Legal", value: "59",  type: "suit"},
+{source: " Change of Control", target: " Legal", value: "72",  type: "suit"},
+{source: " Directors", target: " Legal", value: "79",  type: "suit"},
+{source: " Reports", target: " Legal", value: "32",  type: "suit"},
+{source: " 2016", target: " 2016", value: "28",  type: "suit"},
+{source: " 08", target: " 2016", value: "17",  type: "suit"},
+{source: " 07", target: " 2016", value: "27",  type: "suit"},
+{source: " 05", target: " 2016", value: "29",  type: "suit"},
+{source: " 06", target: " 2016", value: "23",  type: "suit"},
+{source: " 10", target: " 2016", value: "18",  type: "suit"},
+{source: " 11", target: " 2016", value: "19",  type: "suit"},
+{source: " 01", target: " 2016", value: "22",  type: "suit"},
+{source: " 02", target: " 2016", value: "18",  type: "suit"},
+{source: " 03", target: " 2016", value: "16",  type: "suit"},
+{source: " 04", target: " 2016", value: "18",  type: "suit"},
+{source: " 09", target: " 2016", value: "16",  type: "suit"},
+{source: " 12", target: " 2016", value: "13",  type: "suit"},
+{source: " 2014", target: " Tax", value: "175",  type: "suit"},
+{source: " 2013", target: " Tax", value: "92",  type: "suit"},
+{source: " 2015", target: " Tax", value: "167",  type: "suit"},
+{source: " 2012", target: " Tax", value: "87",  type: "suit"},
+{source: " 2016", target: " Tax", value: "75",  type: "suit"},
+{source: " Tax", target: " Tax", value: "434",  type: "suit"},
+{source: " Other", target: " Tax", value: "94",  type: "suit"},
+{source: " 2011", target: " Tax", value: "61",  type: "suit"},
+{source: " Property", target: " Tax", value: "13",  type: "suit"},
+{source: " Corporate", target: " Tax", value: "73",  type: "suit"},
+{source: " 2010", target: " Tax", value: "50",  type: "suit"},
+{source: " Management Accounts", target: " Tax", value: "28",  type: "suit"},
+{source: " 2017", target: " Tax", value: "16",  type: "suit"},
+{source: " Financial", target: " Tax", value: "15",  type: "suit"},
+{source: " 05", target: " Tax", value: "19",  type: "suit"},
+{source: " 10", target: " Tax", value: "17",  type: "suit"},
+{source: " 11", target: " Tax", value: "13",  type: "suit"},
+{source: " Disputes", target: " Tax", value: "58",  type: "suit"},
+{source: " 03", target: " Tax", value: "11",  type: "suit"},
+{source: " Employment", target: " Tax", value: "38",  type: "suit"},
+{source: " 12", target: " Tax", value: "21",  type: "suit"},
+{source: " Tax Returns", target: " Tax", value: "234",  type: "suit"},
+{source: " General", target: " Tax", value: "15",  type: "suit"},
+{source: " 2014", target: " Technical", value: "15",  type: "suit"},
+{source: " 2013", target: " Technical", value: "26",  type: "suit"},
+{source: " 2015", target: " Technical", value: "68",  type: "suit"},
+{source: " 2012", target: " Technical", value: "47",  type: "suit"},
+{source: " 2016", target: " Technical", value: "11",  type: "suit"},
+{source: " Technical", target: " Technical", value: "75",  type: "suit"},
+{source: " Planning", target: " Technical", value: "28",  type: "suit"},
+{source: " Other", target: " Technical", value: "47",  type: "suit"},
+{source: " 2011", target: " Technical", value: "65",  type: "suit"},
+{source: " SM2", target: " Technical", value: "372",  type: "suit"},
+{source: " SM3", target: " Technical", value: "366",  type: "suit"},
+{source: " SM1", target: " Technical", value: "369",  type: "suit"},
+{source: " SM4", target: " Technical", value: "364",  type: "suit"},
+{source: " Additional documents", target: " Technical", value: "149",  type: "suit"},
+{source: " 2010", target: " Technical", value: "12",  type: "suit"},
+{source: " Inverters", target: " Technical", value: "16",  type: "suit"},
+{source: " Construction", target: " Technical", value: "284",  type: "suit"},
+{source: " Modules", target: " Technical", value: "16",  type: "suit"},
+{source: " EPC", target: " Technical", value: "40",  type: "suit"},
+{source: " Drawings", target: " Technical", value: "231",  type: "suit"},
+{source: " Equipment", target: " Technical", value: "49",  type: "suit"},
+{source: " Yield Assessment", target: " Technical", value: "15",  type: "suit"},
+{source: " 08", target: " Technical", value: "184",  type: "suit"},
+{source: " 07", target: " Technical", value: "167",  type: "suit"},
+{source: " 05", target: " Technical", value: "245",  type: "suit"},
+{source: " 06", target: " Technical", value: "132",  type: "suit"},
+{source: " EPC Contract", target: " Technical", value: "12",  type: "suit"},
+{source: " 10", target: " Technical", value: "108",  type: "suit"},
+{source: " 11", target: " Technical", value: "83",  type: "suit"},
+{source: " 01", target: " Technical", value: "338",  type: "suit"},
+{source: " 02", target: " Technical", value: "367",  type: "suit"},
+{source: " 03", target: " Technical", value: "744",  type: "suit"},
+{source: " 04", target: " Technical", value: "258",  type: "suit"},
+{source: " 09", target: " Technical", value: "144",  type: "suit"},
+{source: " 12", target: " Technical", value: "52",  type: "suit"},
+{source: " Operations", target: " Technical", value: "27",  type: "suit"},
+{source: " Reports", target: " Technical", value: "46",  type: "suit"},
+{source: " Planning", target: " Planning", value: "386",  type: "suit"},
+{source: " Other", target: " Planning", value: "14",  type: "suit"},
+{source: " Environmental", target: " Planning", value: "23",  type: "suit"},
+{source: " Construction", target: " Planning", value: "15",  type: "suit"},
+{source: " Drawings", target: " Planning", value: "16",  type: "suit"},
+{source: " 11", target: " Planning", value: "15",  type: "suit"},
+{source: " 01", target: " Planning", value: "18",  type: "suit"},
+{source: " Application", target: " Planning", value: "78",  type: "suit"},
+{source: " 04", target: " Planning", value: "48",  type: "suit"},
+{source: " 12", target: " Planning", value: "85",  type: "suit"},
+{source: " Legal", target: " Other", value: "11",  type: "suit"},
+{source: " Other", target: " Other", value: "23",  type: "suit"},
+{source: " 2011", target: " 2011", value: "13",  type: "suit"},
+{source: " 11", target: " 2011", value: "14",  type: "suit"},
+{source: " Legal", target: " Property", value: "68",  type: "suit"},
+{source: " Lease", target: " Property", value: "125",  type: "suit"},
+{source: " Property", target: " Property", value: "24",  type: "suit"},
+{source: " Environmental", target: " Property", value: "53",  type: "suit"},
+{source: " Intellectual Property", target: " Property", value: "13",  type: "suit"},
+{source: " Claims", target: " Property", value: "72",  type: "suit"},
+{source: " Reports", target: " Property", value: "30",  type: "suit"},
+{source: " Grid", target: " Grid", value: "283",  type: "suit"},
+{source: " Grid Connection", target: " Grid", value: "17",  type: "suit"},
+{source: " Grid Connection Agreement", target: " Grid", value: "17",  type: "suit"},
+{source: " Payment", target: " Grid", value: "41",  type: "suit"},
+{source: " 2014", target: " Corporate", value: "53",  type: "suit"},
+{source: " 2013", target: " Corporate", value: "77",  type: "suit"},
+{source: " Insurance", target: " Corporate", value: "37",  type: "suit"},
+{source: " 2015", target: " Corporate", value: "54",  type: "suit"},
+{source: " 2012", target: " Corporate", value: "11",  type: "suit"},
+{source: " Legal", target: " Corporate", value: "217",  type: "suit"},
+{source: " 2016", target: " Corporate", value: "26",  type: "suit"},
+{source: " Tax", target: " Corporate", value: "72",  type: "suit"},
+{source: " Other", target: " Corporate", value: "51",  type: "suit"},
+{source: " Property", target: " Corporate", value: "14",  type: "suit"},
+{source: " Corporate", target: " Corporate", value: "273",  type: "suit"},
+{source: " Finance", target: " Corporate", value: "14",  type: "suit"},
+{source: " Management Accounts", target: " Corporate", value: "33",  type: "suit"},
+{source: " Board Minutes", target: " Corporate", value: "63",  type: "suit"},
+{source: " EPC", target: " Corporate", value: "26",  type: "suit"},
+{source: " Contracts", target: " Corporate", value: "179",  type: "suit"},
+{source: " Overview", target: " Corporate", value: "30",  type: "suit"},
+{source: " O&M", target: " Corporate", value: "42",  type: "suit"},
+{source: " Financial Statements", target: " Corporate", value: "26",  type: "suit"},
+{source: " Financial", target: " Corporate", value: "41",  type: "suit"},
+{source: " 05", target: " Corporate", value: "11",  type: "suit"},
+{source: " Certificates of Incorporation", target: " Corporate", value: "13",  type: "suit"},
+{source: " 01", target: " Corporate", value: "66",  type: "suit"},
+{source: " 02", target: " Corporate", value: "13",  type: "suit"},
+{source: " Certificates", target: " Corporate", value: "19",  type: "suit"},
+{source: " 04", target: " Corporate", value: "14",  type: "suit"},
+{source: " Employment", target: " Corporate", value: "20",  type: "suit"},
+{source: " General", target: " Corporate", value: "39",  type: "suit"},
+{source: " Directors", target: " Corporate", value: "11",  type: "suit"},
+{source: " Other", target: " Data Sheets", value: "18",  type: "suit"},
+{source: " Inverters", target: " Data Sheets", value: "32",  type: "suit"},
+{source: " Modules", target: " Data Sheets", value: "35",  type: "suit"},
+{source: " Transformers", target: " Data Sheets", value: "30",  type: "suit"},
+{source: " 2016", target: " Finance", value: "48",  type: "suit"},
+{source: " Tax", target: " Finance", value: "32",  type: "suit"},
+{source: " Other", target: " Finance", value: "114",  type: "suit"},
+{source: " Finance", target: " Finance", value: "23",  type: "suit"},
+{source: " Management Accounts", target: " Finance", value: "219",  type: "suit"},
+{source: " 2017", target: " Finance", value: "12",  type: "suit"},
+{source: " Financial", target: " Finance", value: "17",  type: "suit"},
+{source: " 08", target: " Finance", value: "12",  type: "suit"},
+{source: " 07", target: " Finance", value: "13",  type: "suit"},
+{source: " 05", target: " Finance", value: "14",  type: "suit"},
+{source: " 06", target: " Finance", value: "16",  type: "suit"},
+{source: " 10", target: " Finance", value: "22",  type: "suit"},
+{source: " 11", target: " Finance", value: "16",  type: "suit"},
+{source: " 01", target: " Finance", value: "15",  type: "suit"},
+{source: " 02", target: " Finance", value: "14",  type: "suit"},
+{source: " 03", target: " Finance", value: "15",  type: "suit"},
+{source: " 04", target: " Finance", value: "15",  type: "suit"},
+{source: " 09", target: " Finance", value: "14",  type: "suit"},
+{source: " 2014", target: " Management Accounts", value: "11",  type: "suit"},
+{source: " 2015", target: " Management Accounts", value: "20",  type: "suit"},
+{source: " 2016", target: " Management Accounts", value: "30",  type: "suit"},
+{source: " 08", target: " Management Accounts", value: "16",  type: "suit"},
+{source: " 07", target: " Management Accounts", value: "16",  type: "suit"},
+{source: " 05", target: " Management Accounts", value: "16",  type: "suit"},
+{source: " 06", target: " Management Accounts", value: "18",  type: "suit"},
+{source: " 10", target: " Management Accounts", value: "17",  type: "suit"},
+{source: " 11", target: " Management Accounts", value: "17",  type: "suit"},
+{source: " 01", target: " Management Accounts", value: "19",  type: "suit"},
+{source: " 02", target: " Management Accounts", value: "16",  type: "suit"},
+{source: " 03", target: " Management Accounts", value: "17",  type: "suit"},
+{source: " 04", target: " Management Accounts", value: "16",  type: "suit"},
+{source: " 09", target: " Management Accounts", value: "19",  type: "suit"},
+{source: " 12", target: " Management Accounts", value: "15",  type: "suit"},
+{source: " Application", target: " Environmental", value: "30",  type: "suit"},
+{source: " Reports", target: " Environmental", value: "17",  type: "suit"},
+{source: " 2017", target: " 2017", value: "13",  type: "suit"},
+{source: " 08", target: " 2017", value: "15",  type: "suit"},
+{source: " 07", target: " 2017", value: "20",  type: "suit"},
+{source: " 05", target: " 2017", value: "15",  type: "suit"},
+{source: " 06", target: " 2017", value: "15",  type: "suit"},
+{source: " 01", target: " 2017", value: "16",  type: "suit"},
+{source: " 02", target: " 2017", value: "11",  type: "suit"},
+{source: " 03", target: " 2017", value: "11",  type: "suit"},
+{source: " 04", target: " 2017", value: "11",  type: "suit"},
+{source: " Data Sheets", target: " Inverters", value: "21",  type: "suit"},
+{source: " Warranty Certificates", target: " Inverters", value: "16",  type: "suit"},
+{source: " Grid", target: " Grid Connection", value: "319",  type: "suit"},
+{source: " Payments", target: " Grid Connection", value: "93",  type: "suit"},
+{source: " Grid Connection", target: " Grid Connection", value: "267",  type: "suit"},
+{source: " Grid Connection Agreement", target: " Grid Connection", value: "207",  type: "suit"},
+{source: " PTF", target: " Grid Connection", value: "181",  type: "suit"},
+{source: " Payment", target: " Grid Connection", value: "122",  type: "suit"},
+{source: " Technical", target: " Construction", value: "146",  type: "suit"},
+{source: " Data Sheets", target: " Construction", value: "250",  type: "suit"},
+{source: " Delivery Notes", target: " Construction", value: "91",  type: "suit"},
+{source: " Inverters", target: " Construction", value: "60",  type: "suit"},
+{source: " Construction", target: " Construction", value: "29",  type: "suit"},
+{source: " Modules", target: " Construction", value: "41",  type: "suit"},
+{source: " EPC", target: " Construction", value: "610",  type: "suit"},
+{source: " Transformers", target: " Construction", value: "43",  type: "suit"},
+{source: " Drawings", target: " Construction", value: "22",  type: "suit"},
+{source: " 06", target: " Construction", value: "16",  type: "suit"},
+{source: " EPC Contract", target: " Construction", value: "533",  type: "suit"},
+{source: " 12", target: " Construction", value: "18",  type: "suit"},
+{source: " Reports", target: " Construction", value: "19",  type: "suit"},
+{source: " PPA", target: " PPA", value: "46",  type: "suit"},
+{source: " Data Sheets", target: " Modules", value: "11",  type: "suit"},
+{source: " Warranty Certificates", target: " Modules", value: "20",  type: "suit"},
+{source: " Planning", target: " EPC", value: "12",  type: "suit"},
+{source: " Construction", target: " EPC", value: "79",  type: "suit"},
+{source: " EPC", target: " EPC", value: "47",  type: "suit"},
+{source: " Appendices", target: " EPC", value: "11",  type: "suit"},
+{source: " Superseded", target: " EPC", value: "32",  type: "suit"},
+{source: " 2014", target: " Contracts", value: "76",  type: "suit"},
+{source: " 2013", target: " Contracts", value: "33",  type: "suit"},
+{source: " Insurance", target: " Contracts", value: "30",  type: "suit"},
+{source: " 2015", target: " Contracts", value: "22",  type: "suit"},
+{source: " 2012", target: " Contracts", value: "34",  type: "suit"},
+{source: " Legal", target: " Contracts", value: "13",  type: "suit"},
+{source: " Technical", target: " Contracts", value: "13",  type: "suit"},
+{source: " Lease", target: " Contracts", value: "37",  type: "suit"},
+{source: " Other", target: " Contracts", value: "415",  type: "suit"},
+{source: " 2011", target: " Contracts", value: "30",  type: "suit"},
+{source: " Grid", target: " Contracts", value: "37",  type: "suit"},
+{source: " 2010", target: " Contracts", value: "65",  type: "suit"},
+{source: " Finance", target: " Contracts", value: "577",  type: "suit"},
+{source: " Environmental", target: " Contracts", value: "60",  type: "suit"},
+{source: " Construction", target: " Contracts", value: "347",  type: "suit"},
+{source: " PPA", target: " Contracts", value: "85",  type: "suit"},
+{source: " EPC", target: " Contracts", value: "162",  type: "suit"},
+{source: " O&M", target: " Contracts", value: "109",  type: "suit"},
+{source: " 08", target: " Contracts", value: "11",  type: "suit"},
+{source: " 07", target: " Contracts", value: "13",  type: "suit"},
+{source: " Asset Management", target: " Contracts", value: "44",  type: "suit"},
+{source: " 05", target: " Contracts", value: "302",  type: "suit"},
+{source: " 06", target: " Contracts", value: "19",  type: "suit"},
+{source: " 10", target: " Contracts", value: "1911",  type: "suit"},
+{source: " 11", target: " Contracts", value: "398",  type: "suit"},
+{source: " 01", target: " Contracts", value: "81",  type: "suit"},
+{source: " 02", target: " Contracts", value: "80",  type: "suit"},
+{source: " 03", target: " Contracts", value: "13",  type: "suit"},
+{source: " 04", target: " Contracts", value: "26",  type: "suit"},
+{source: " 09", target: " Contracts", value: "98",  type: "suit"},
+{source: " 12", target: " Contracts", value: "131",  type: "suit"},
+{source: " General", target: " Contracts", value: "21",  type: "suit"},
+{source: " Change of Control", target: " Contracts", value: "74",  type: "suit"},
+{source: " Data Sheets", target: " Transformers", value: "11",  type: "suit"},
+{source: " Warranty Certificates", target: " Transformers", value: "15",  type: "suit"},
+{source: " Construction", target: " Drawings", value: "11",  type: "suit"},
+{source: " Drawings", target: " Drawings", value: "29",  type: "suit"},
+{source: " 11", target: " Drawings", value: "20",  type: "suit"},
+{source: " 01", target: " Drawings", value: "15",  type: "suit"},
+{source: " General", target: " Drawings", value: "12",  type: "suit"},
+{source: " 2014", target: " Overview", value: "56",  type: "suit"},
+{source: " 2013", target: " Overview", value: "50",  type: "suit"},
+{source: " 2015", target: " Overview", value: "60",  type: "suit"},
+{source: " 2012", target: " Overview", value: "19",  type: "suit"},
+{source: " 2016", target: " Overview", value: "55",  type: "suit"},
+{source: " Corporate", target: " Overview", value: "245",  type: "suit"},
+{source: " Overview", target: " Overview", value: "16",  type: "suit"},
+{source: " Financial", target: " Overview", value: "12",  type: "suit"},
+{source: " Payment", target: " Grid Connection Agreement", value: "37",  type: "suit"},
+{source: " Payments", target: " PTF", value: "45",  type: "suit"},
+{source: " Payment", target: " PTF", value: "47",  type: "suit"},
+{source: " 2016", target: " O&M", value: "19",  type: "suit"},
+{source: " Corporate", target: " O&M", value: "67",  type: "suit"},
+{source: " 2017", target: " O&M", value: "81",  type: "suit"},
+{source: " O&M", target: " O&M", value: "130",  type: "suit"},
+{source: " 07", target: " O&M", value: "15",  type: "suit"},
+{source: " 10", target: " O&M", value: "46",  type: "suit"},
+{source: " 12", target: " O&M", value: "13",  type: "suit"},
+{source: " 2015", target: " Financial Statements", value: "17",  type: "suit"},
+{source: " 2016", target: " Financial Statements", value: "33",  type: "suit"},
+{source: " 02", target: " Financial Statements", value: "12",  type: "suit"},
+{source: " 2014", target: " Financial", value: "48",  type: "suit"},
+{source: " 2013", target: " Financial", value: "62",  type: "suit"},
+{source: " 2015", target: " Financial", value: "29",  type: "suit"},
+{source: " 2012", target: " Financial", value: "19",  type: "suit"},
+{source: " Tax", target: " Financial", value: "16",  type: "suit"},
+{source: " Other", target: " Financial", value: "34",  type: "suit"},
+{source: " 2011", target: " Financial", value: "29",  type: "suit"},
+{source: " Corporate", target: " Financial", value: "11",  type: "suit"},
+{source: " 2010", target: " Financial", value: "25",  type: "suit"},
+{source: " Finance", target: " Financial", value: "30",  type: "suit"},
+{source: " Management Accounts", target: " Financial", value: "11",  type: "suit"},
+{source: " Financial", target: " Financial", value: "156",  type: "suit"},
+{source: " 05", target: " Financial", value: "11",  type: "suit"},
+{source: " 01", target: " Financial", value: "13",  type: "suit"},
+{source: " Financials", target: " Financial", value: "16",  type: "suit"},
+{source: " General", target: " Financial", value: "33",  type: "suit"},
+{source: " Superseded", target: " Appendices", value: "22",  type: "suit"},
+{source: " Certificates", target: " Building Permits", value: "12",  type: "suit"},
+{source: " Intellectual Property", target: " Intellectual Property", value: "13",  type: "suit"},
+{source: " Claims", target: " Intellectual Property", value: "46",  type: "suit"},
+{source: " Technical", target: " Equipment", value: "96",  type: "suit"},
+{source: " Other", target: " Equipment", value: "27",  type: "suit"},
+{source: " Miscellaneous", target: " Equipment", value: "41",  type: "suit"},
+{source: " Grid", target: " Equipment", value: "48",  type: "suit"},
+{source: " Corporate", target: " Equipment", value: "39",  type: "suit"},
+{source: " Environmental", target: " Equipment", value: "72",  type: "suit"},
+{source: " Inverters", target: " Equipment", value: "73",  type: "suit"},
+{source: " Modules", target: " Equipment", value: "62",  type: "suit"},
+{source: " EPC", target: " Equipment", value: "58",  type: "suit"},
+{source: " Transformers", target: " Equipment", value: "27",  type: "suit"},
+{source: " Certificates", target: " Equipment", value: "24",  type: "suit"},
+{source: " 04", target: " Equipment", value: "14",  type: "suit"},
+{source: " Operations", target: " Equipment", value: "27",  type: "suit"},
+{source: " SM2", target: " 08", value: "21",  type: "suit"},
+{source: " SM3", target: " 08", value: "21",  type: "suit"},
+{source: " SM1", target: " 08", value: "21",  type: "suit"},
+{source: " SM4", target: " 08", value: "21",  type: "suit"},
+{source: " 2014", target: " Asset Management", value: "11",  type: "suit"},
+{source: " 2015", target: " Asset Management", value: "11",  type: "suit"},
+{source: " Asset Management", target: " Asset Management", value: "33",  type: "suit"},
+{source: " SM2", target: " 05", value: "34",  type: "suit"},
+{source: " SM3", target: " 05", value: "34",  type: "suit"},
+{source: " SM1", target: " 05", value: "36",  type: "suit"},
+{source: " SM4", target: " 05", value: "42",  type: "suit"},
+{source: " Delivery Notes", target: " EPC Contract", value: "91",  type: "suit"},
+{source: " EPC", target: " EPC Contract", value: "41",  type: "suit"},
+{source: " EPC Contract", target: " EPC Contract", value: "41",  type: "suit"},
+{source: " Legal", target: " 10", value: "11",  type: "suit"},
+{source: " Technical", target: " 10", value: "22",  type: "suit"},
+{source: " Grid", target: " 10", value: "20",  type: "suit"},
+{source: " Corporate", target: " 10", value: "26",  type: "suit"},
+{source: " Grid Connection", target: " 10", value: "16",  type: "suit"},
+{source: " Construction", target: " 10", value: "25",  type: "suit"},
+{source: " 10", target: " 10", value: "30",  type: "suit"},
+{source: " Permitting", target: " 10", value: "38",  type: "suit"},
+{source: " Environmental", target: " Permitting", value: "46",  type: "suit"},
+{source: " Building Permits", target: " Permitting", value: "120",  type: "suit"},
+{source: " 05", target: " Permitting", value: "17",  type: "suit"},
+{source: " Application", target: " Permitting", value: "34",  type: "suit"},
+{source: " 11", target: " 11", value: "19",  type: "suit"},
+{source: " Claims", target: " Disputes", value: "16",  type: "suit"},
+{source: " USM", target: " 01", value: "67",  type: "suit"},
+{source: " SM2", target: " 02", value: "21",  type: "suit"},
+{source: " SM3", target: " 02", value: "23",  type: "suit"},
+{source: " SM1", target: " 02", value: "21",  type: "suit"},
+{source: " SM4", target: " 02", value: "21",  type: "suit"},
+{source: " Planning", target: " Application", value: "16",  type: "suit"},
+{source: " Appendices", target: " Application", value: "13",  type: "suit"},
+{source: " 12", target: " Application", value: "65",  type: "suit"},
+{source: " SM2", target: " 03", value: "129",  type: "suit"},
+{source: " SM3", target: " 03", value: "129",  type: "suit"},
+{source: " SM1", target: " 03", value: "132",  type: "suit"},
+{source: " SM4", target: " 03", value: "132",  type: "suit"},
+{source: " 10", target: " 03", value: "12",  type: "suit"},
+{source: " 12", target: " 03", value: "12",  type: "suit"},
+{source: " Tax", target: " Financials", value: "45",  type: "suit"},
+{source: " Management Accounts", target: " Financials", value: "63",  type: "suit"},
+{source: " Financial", target: " Financials", value: "16",  type: "suit"},
+{source: " SM2", target: " 04", value: "33",  type: "suit"},
+{source: " SM3", target: " 04", value: "30",  type: "suit"},
+{source: " SM1", target: " 04", value: "30",  type: "suit"},
+{source: " SM4", target: " 04", value: "30",  type: "suit"},
+{source: " 2015", target: " 09", value: "36",  type: "suit"},
+{source: " Claims", target: " Employment", value: "51",  type: "suit"},
+{source: " Employment", target: " Employment", value: "73",  type: "suit"},
+{source: " Consultants Contracts", target: " Employment", value: "43",  type: "suit"},
+{source: " 2014", target: " Tax Returns", value: "26",  type: "suit"},
+{source: " 2015", target: " Tax Returns", value: "28",  type: "suit"},
+{source: " 2016", target: " Tax Returns", value: "24",  type: "suit"},
+{source: " Articles of Association", target: " General", value: "76",  type: "suit"},
+{source: " Corporate", target: " General", value: "78",  type: "suit"},
+{source: " Financial", target: " General", value: "28",  type: "suit"},
+{source: " Appendices", target: " General", value: "15",  type: "suit"},
+{source: " 05", target: " General", value: "33",  type: "suit"},
+{source: " Certificates of Incorporation", target: " General", value: "73",  type: "suit"},
+{source: " Certificates", target: " General", value: "77",  type: "suit"},
+{source: " Directors", target: " General", value: "76",  type: "suit"},
+{source: " 2014", target: " Directors", value: "16",  type: "suit"},
+{source: " 2013", target: " Directors", value: "11",  type: "suit"},
+{source: " 2015", target: " Directors", value: "13",  type: "suit"},
+{source: " 2013", target: " Operations", value: "40",  type: "suit"},
+{source: " 2015", target: " Operations", value: "31",  type: "suit"},
+{source: " 2016", target: " Operations", value: "87",  type: "suit"},
+{source: " Technical", target: " Operations", value: "25",  type: "suit"},
+{source: " Other", target: " Operations", value: "24",  type: "suit"},
+{source: " 2017", target: " Operations", value: "48",  type: "suit"},
+{source: " PPA", target: " Operations", value: "15",  type: "suit"},
+{source: " Drawings", target: " Operations", value: "205",  type: "suit"},
+{source: " O&M", target: " Operations", value: "18",  type: "suit"},
+{source: " Financial", target: " Operations", value: "23",  type: "suit"},
+{source: " Appendices", target: " Operations", value: "16",  type: "suit"},
+{source: " Equipment", target: " Operations", value: "15",  type: "suit"},
+{source: " Operations", target: " Operations", value: "43",  type: "suit"},
+{source: " Reports", target: " Operations", value: "43",  type: "suit"},
+{source: " 2014", target: " Reports", value: "66",  type: "suit"},
+{source: " 2013", target: " Reports", value: "90",  type: "suit"},
+{source: " Insurance", target: " Reports", value: "19",  type: "suit"},
+{source: " 2015", target: " Reports", value: "50",  type: "suit"},
+{source: " 2012", target: " Reports", value: "21",  type: "suit"},
+{source: " Legal", target: " Reports", value: "29",  type: "suit"},
+{source: " 2016", target: " Reports", value: "56",  type: "suit"},
+{source: " Tax", target: " Reports", value: "18",  type: "suit"},
+{source: " Technical", target: " Reports", value: "32",  type: "suit"},
+{source: " 2011", target: " Reports", value: "13",  type: "suit"},
+{source: " Environmental", target: " Reports", value: "12",  type: "suit"},
+{source: " 2017", target: " Reports", value: "33",  type: "suit"},
+{source: " 09", target: " Reports", value: "84",  type: "suit"},
+
+];
+var nodes = {};
+// Compute the distinct nodes from the links.
+links.forEach(function(link) {
+  link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+  link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+});
+var w = 2880,
+    h = 2880;
+var force = d3.layout.force()
+    .nodes(d3.values(nodes))
+    .links(links)
+    .size([w, h])
+    .linkDistance(120)
+    .linkStrength(1)
+    .charge(-700)
+    .on("tick", tick)
+    .start();
+var svg = d3.select("body").append("svg:svg")
+    .attr("width", w)
+    .attr("height", h);
+// Per-type markers, as they don't inherit styles.
+svg.append("svg:defs").selectAll("marker")
+    .data(["suit", "licensing", "resolved"])
+  .enter().append("svg:marker")
+    .attr("id", String)
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 15)
+    .attr("refY", -1.5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+  .append("svg:path")
+    .attr("d", "M0,-5L10,0L0,5");
+    var link = svg.append("svg:g").selectAll("g.link")
+        .data(force.links())
+      .enter().append('g')
+        .attr('class', 'link');
+    
+    var linkPath = link.append("svg:path")
+        .attr("class", function(d) { return "link " + d.type; })
+        .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
+    
+    var textPath = link.append("svg:path")
+        .attr("id", function(d) { return d.source.index + "_" + d.target.index; })
+        .attr("class", "textpath");
+var circle = svg.append("svg:g").selectAll("circle")
+    .data(force.nodes())
+  .enter().append("svg:circle")
+    .attr("r", 6)
+    .call(force.drag);
+var text = svg.append("svg:g").selectAll("g")
+    .data(force.nodes())
+  .enter().append("svg:g");
+// A copy of the text with a thick white stroke for legibility.
+text.append("svg:text")
+    .attr("x", 8)
+    .attr("y", ".31em")
+    .attr("class", "shadow")
+    .text(function(d) { return d.name; });
+text.append("svg:text")
+    .attr("x", 8)
+    .attr("y", ".31em")
+    .text(function(d) { return d.name; });
+var path_label = svg.append("svg:g").selectAll(".path_label")
+    .data(force.links())
+  .enter().append("svg:text")
+    .attr("class", "path_label")
+    .append("svg:textPath")
+      .attr("startOffset", "50%")
+      .attr("text-anchor", "middle")
+      .attr("xlink:href", function(d) { return "#" + d.source.index + "_" + d.target.index; })
+      .style("fill", "#000")
+      .style("font-family", "Arial")
+      .style("font-size","10px")
+      .text(function(d) { return d.value; });
+    function arcPath(leftHand, d) {
+        var start = leftHand ? d.source : d.target,
+            end = leftHand ? d.target : d.source,
+            dx = end.x - start.x,
+            dy = end.y - start.y,
+            dr = Math.sqrt(dx * dx + dy * dy),
+            sweep = leftHand ? 0 : 1;
+        return "M" + start.x + "," + start.y + "A" + dr + "," + dr + " 0 0," + sweep + " " + end.x + "," + end.y;
+    }
+// Use elliptical arc path segments to doubly-encode directionality.
+function tick() {
+  linkPath.attr("d", function(d) {
+    return arcPath(false, d);
+  });
+    
+  textPath.attr("d", function(d) {
+    return arcPath(d.source.x < d.target.x, d);
+  });
+  circle.attr("transform", function(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  });
+  text.attr("transform", function(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  });
+}
+</script>
